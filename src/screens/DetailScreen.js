@@ -13,7 +13,6 @@ export default function DetailScreen({ route, navigation }) {
   const [error, setError] = useState(null);
   const [retry, setRetry] = useState(0);
 
-  // useEffect: solo vuelve a pedir la ficha si cambia pokemonId
   useEffect(() => {
     const controller = new AbortController();
 

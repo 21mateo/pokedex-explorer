@@ -5,19 +5,18 @@ import PokemonCard from '../components/PokemonCard';
 import { colors, spacing } from '../theme/colors';
 
 export default function HomeScreen({ navigation }) {
-  const [searchText, setSearchText] = useState(''); // lo que el usuario escribe
-  const [query, setQuery] = useState(''); // lo que realmente se busca ('' = lista normal)
-  const [pokemons, setPokemons] = useState([]); // lista con scroll infinito
-  const [results, setResults] = useState([]); // resultado de la busqueda
+  const [searchText, setSearchText] = useState('');
+  const [query, setQuery] = useState(''); 
+  const [pokemons, setPokemons] = useState([]); 
+  const [results, setResults] = useState([]); 
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [retry, setRetry] = useState(0); // al cambiar vuelve a ejecutar los useEffect
+  const [retry, setRetry] = useState(0);
 
-  // useEffect: carga la lista al abrir y cada vez que cambia offset
   useEffect(() => {
-    if (query !== '') return; // si estamos buscando no carga la lista
+    if (query !== '') return; 
 
     const controller = new AbortController();
 
@@ -27,10 +26,8 @@ export default function HomeScreen({ navigation }) {
       setError(null);
       try {
         const data = await getPokemonList(20, offset, controller.signal);
-        // primera pagina reemplaza, las demas se agregan al final
         setPokemons((prev) => (offset === 0 ? data : [...prev, ...data]));
       } catch (err) {
-        // Si la petición fue cancelada no es un error real
         if (err.name !== 'AbortError') {
           setError('No se pudo cargar la lista. Revisa tu internet.');
         }
@@ -46,7 +43,6 @@ export default function HomeScreen({ navigation }) {
     return () => controller.abort();
   }, [offset, retry]);
 
-  // useEffect: busca cada vez que cambia query
   useEffect(() => {
     if (query === '') return;
 
@@ -57,7 +53,6 @@ export default function HomeScreen({ navigation }) {
       setError(null);
       try {
         const pokemon = await getPokemonDetail(query, controller.signal);
-        // null = no existe -> lista vacia y se muestra ListEmptyComponent
         setResults(pokemon ? [pokemon] : []);
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -82,7 +77,6 @@ export default function HomeScreen({ navigation }) {
     setQuery('');
   };
 
-  // scroll infinito
   const loadMore = () => {
     if (query !== '' || loading || loadingMore) return;
     setOffset(offset + 20);
@@ -96,7 +90,7 @@ export default function HomeScreen({ navigation }) {
           placeholder="Busca por nombre o número..."
           value={searchText}
           onChangeText={setSearchText}
-          onSubmitEditing={handleSearch} // tecla "Enter" del teclado
+          onSubmitEditing={handleSearch} 
           returnKeyType="search"
           autoCapitalize="none"
           autoCorrect={false}
